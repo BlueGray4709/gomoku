@@ -63,8 +63,41 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
-    ####CHANGE ME
-    open_seq_count, semi_open_seq_count = 0, 0
+        open_seq_count, semi_open_seq_count = 0, 0
+    
+    for i in range(len(board)):
+        top_vertical = detect_row(board, col, 0, i, length, 1, 0) 
+        top_horizontal = detect_row(board, col, 0, i, length, 0, 1)
+        top_diag_right = detect_row(board, col, 0, i, length, 1, 1)
+        top_diag_left = detect_row(board, col, 0, i, length, 1, -1)
+        
+        open_seq_count += top_vertical[0] + top_horizontal[0] + top_diag_right[0] + top_diag_left[0]
+        semi_open_seq_count += top_vertical[1] + top_horizontal[1] + top_diag_right[1] + top_diag_left[1]
+        
+        bot_vertical = detect_row(board, col, len(board)-1, i, length, 1, 0) 
+        bot_horizontal = detect_row(board, col, len(board)-1, i, length, 0, 1)
+        bot_diag_right = detect_row(board, col, len(board)-1, i, length, 1, 1)
+        bot_diag_left = detect_row(board, col, len(board)-1, i, length, 1, -1)
+        
+        open_seq_count += bot_vertical[0] + bot_horizontal[0] + bot_diag_right[0] + bot_diag_left[0]
+        semi_open_seq_count += bot_vertical[1] + bot_horizontal[1] + bot_diag_right[1] + bot_diag_left[1]
+        
+        left_vertical = detect_row(board, col, i, 0, length, 1, 0) 
+        left_horizontal = detect_row(board, col, i, 0, length, 0, 1)
+        left_diag_right = detect_row(board, col, i, 0, length, 1, 1)
+        left_diag_left = detect_row(board, col, i, 0, length, 1, -1)
+        
+        open_seq_count += left_vertical[0] + left_horizontal[0] + left_diag_right[0] + left_diag_left[0]
+        semi_open_seq_count += left_vertical[1] + left_horizontal[1] + left_diag_right[1] + left_diag_left[1]
+        
+        right_vertical = detect_row(board, col, i, len(board)-1, length, 1, 0) 
+        right_horizontal = detect_row(board, col, i, len(board)-1, length, 0, 1)
+        right_diag_right = detect_row(board, col, i, len(board)-1, length, 1, 1)
+        right_diag_left = detect_row(board, col, i, len(board)-1, length, 1, -1)
+        
+        open_seq_count += right_vertical[0] + right_horizontal[0] + right_diag_right[0] + right_diag_left[0]
+        semi_open_seq_count += right_vertical[1] + right_horizontal[1] + right_diag_right[1] + right_diag_left[1]
+        
     return open_seq_count, semi_open_seq_count
     
 def search_max(board):
