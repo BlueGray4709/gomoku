@@ -36,25 +36,25 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     board_size = len(board)
     open_seq_count = 0
     semi_open_seq_count = 0
-    run_length = 0
+    run_length = 0 
 
     y, x = y_start, x_start
 
-    while 0 <= y < board_size and 0 <= x < board_size:
-        if board[y][x] == col:
-            run_length += 1
+    while 0 <= y < board_size and 0 <= x < board_size: #within board
+        if board[y][x] == col: #if the square is the same color as col 
+            run_length += 1 
 
             next_y = y + d_y
             next_x = x + d_x
 
-            at_end = not (
+            at_end = not ( #at_end = True means run has not reached edge of board
                 0 <= next_y < board_size and
                 0 <= next_x < board_size
             )
 
-            if at_end or board[next_y][next_x] != col:
-                if run_length == length:
-                    bounded = is_bounded(
+            if at_end or board[next_y][next_x] != col: #run has ended, now we check
+                if run_length == length: #matches length we look for
+                    bounded = is_bounded( 
                         board, y, x, length, d_y, d_x
                     )
 
@@ -63,47 +63,48 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
                     elif bounded == "SEMIOPEN":
                         semi_open_seq_count += 1
 
-                run_length = 0
+                run_length = 0 #clear run length for next while loop iteration
 
         else:
-            run_length = 0
+            run_length = 0 
 
-        y += d_y
-        x += d_x
+        y += d_y #shift search
+        x += d_x #shift search
 
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
-    board_size = len(board)
+    board_size = len(board) 
     open_seq_count, semi_open_seq_count = 0, 0
 
-    for d_y, d_x in [(0,1), (1,0), (1,1), (1,-1)]:
+    for d_y, d_x in [(0,1), (1,0), (1,1), (1,-1)]: #all possible move directions
         for y in range(board_size):
             for x in range(board_size):
-                prev_y = y - d_y
-                prev_x = x - d_x
+                prev_y = y - d_y #iff at edge, prev_y < 0 
+                prev_x = x - d_x #iff at edge, prev_x < 0
 
-                if not(0 <= prev_y < board_size and 0 <= prev_x < board_size):
-                    open_count, semi_count = detect_row(board, col, y, x, length, d_y, d_x)
+                if not(0 <= prev_y < board_size and 0 <= prev_x < board_size): #if spot being checked is along the edge of the board
+                    open_count, semi_count = detect_row(board, col, y, x, length, d_y, d_x) #call detect_row
 
-                    open_seq_count += open_count
-                    semi_open_seq_count += semi_count
+                    open_seq_count += open_count #augment
+                    semi_open_seq_count += semi_count #augment
     return open_seq_count, semi_open_seq_count
     
 def search_max(board):
-    best_score = float("-inf")
-    move_y, move_x = -1, -1
+    best_score = float("-inf") #smallest possible number 
+    move_y, move_x = -1, -1  #placeholder values for move_y and move_x
 
-    for y in range(len(board)):
-        for x in range(len(board)):
+    for y in range(len(board)): 
+        for x in range(len(board)): 
             if board[y][x] == " ":
-                board[y][x] = "b"
-                current_score = score(board)
-                board[y][x] = " "
+                board[y][x] = "b" #modifies board  
+                current_score = score(board) #checks hypothetical score
+                board[y][x] = " " #modifies board back
 
-                if current_score > best_score:
-                    best_score = current_score
+                if current_score > best_score: #compares hypothetical score with best score
+                    best_score = current_score 
                     move_y, move_x = y, x
+    
     return move_y, move_x
     
 def score(board):
@@ -141,8 +142,8 @@ def is_win(board):
         for x in range(board_size):
             col = board[y][x]
 
-            if col == " ":
-                continue
+            if col == " ": #if space is empty
+                continue #no point searching, find another (y, x)
 
             for d_y, d_x in [(0,1), (1,0), (1,1), (1,-1)]:
                 prev_y = y - d_y
@@ -150,26 +151,26 @@ def is_win(board):
 
                 #skip stones that are not the start of a run
                 if 0 <= prev_y < board_size and 0 <= prev_x < board_size and board[prev_y][prev_x] == col:
-                    continue
+                    continue 
 
                 run_length = 0
                 next_y, next_x = y, x
 
-                while 0 <= next_y < board_size and 0 <= next_x < board_size and board[next_y][next_x] == col:
-                    run_length += 1
-                    next_y += d_y
-                    next_x += d_x
+                while 0 <= next_y < board_size and 0 <= next_x < board_size and board[next_y][next_x] == col: #while stone is within dimension of board, and all stones of 1 color are consecutive
+                    run_length += 1 
+                    next_y += d_y #shift search
+                    next_x += d_x #shift search
 
                 if run_length == 5:
-                    if col == "b":
+                    if col == "b": #stone in sequence of 5 is black
                         return "Black won"
                     return "White won"
 
-    for row in board:
-        if " " in row:
+    for row in board: 
+        if " " in row: #if any spaces on board are empty
             return "Continue playing"
 
-    return "Draw"
+    return "Draw" #if all of board is full
 
 def print_board(board):
     
